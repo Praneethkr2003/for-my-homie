@@ -34,41 +34,34 @@ let currentAudio = null;
 
 const SOUND_FILES = {
   accha:    'SOUNDS/accha-thik-hai-samjhgya-puneet-superstar.mp3',
-  messi:   'SOUNDS/camera-wowo-messi.mp3',
-  jhaat:   'SOUNDS/ek-jhaat-bhar-ka-aadmi.mp3',
-  hub:     'SOUNDS/hub-intro-sound.mp3',
-  takleef: 'SOUNDS/is-sajjan-ko-kya-takleef-hai-bhai.mp3',
-  gareeb:  'SOUNDS/jo-gareeb-hove-naa.mp3',
-  leteLete:'SOUNDS/kya-aap-lete-lete.mp3',
-  rizz:    'SOUNDS/rizz-sound-effect.mp3',
-  sochna:  'SOUNDS/sochna-pdta-hai-re-hindustani-bhau.mp3',
-  tuSamjha:'SOUNDS/tu-samjha.mp3',
-  phone:   'SOUNDS/yo-phone-is-ringing.mp3'
+  messi:    'SOUNDS/camera-wowo-messi.mp3',
+  jhaat:    'SOUNDS/ek-jhaat-bhar-ka-aadmi.mp3',
+  hub:      'SOUNDS/hub-intro-sound.mp3',
+  takleef:  'SOUNDS/is-sajjan-ko-kya-takleef-hai-bhai.mp3',
+  gareeb:   'SOUNDS/jo-gareeb-hove-naa.mp3',
+  leteLete: 'SOUNDS/kya-aap-lete-lete.mp3',
+  rizz:     'SOUNDS/rizz-sound-effect.mp3',
+  sochna:   'SOUNDS/sochna-pdta-hai-re-hindustani-bhau.mp3',
+  tuSamjha: 'SOUNDS/tu-samjha.mp3',
+  phone:    'SOUNDS/yo-phone-is-ringing.mp3'
 };
 
-const SOUNDS = {};
-Object.keys(SOUND_FILES).forEach(key => {
-  SOUNDS[key] = new Audio(SOUND_FILES[key]);
-  SOUNDS[key].preload = 'auto';
-});
+function stopAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio = null;
+  }
+}
 
-function playSound(key, force = false) {
+function playSound(key) {
   if (!soundEnabled || !SOUND_FILES[key]) return;
   try {
-    // If a sound is currently playing and force is false, let it finish naturally
-    if (!force && currentAudio && !currentAudio.paused && !currentAudio.ended) {
-      return;
-    }
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-    }
+    stopAudio();
     const audio = new Audio(SOUND_FILES[key]);
     currentAudio = audio;
-    audio.play().catch(e => console.log('Audio playback info:', e));
-  } catch (e) {
-    console.log('Audio playback error:', e);
-  }
+    audio.play().catch(() => {});
+  } catch (e) { /* ignore */ }
 }
 
 function toggleSound() {
@@ -78,38 +71,18 @@ function toggleSound() {
     btn.classList.remove('muted');
     btn.innerHTML = '🔊 <span id="sound-toggle-text">SOUND ON</span>';
   } else {
-    if (currentAudio) currentAudio.pause();
+    stopAudio();
     btn.classList.add('muted');
     btn.innerHTML = '🔇 <span id="sound-toggle-text">MUTED</span>';
   }
 }
 
-// ── AUTOPLAY INTRO ON LOAD ────────────────────────────────────
-let hasPlayedIntro = false;
-
-function initAutoplayIntro() {
-  if (hasPlayedIntro) return;
-
-  const tryPlay = () => {
-    if (hasPlayedIntro) return;
-    playSound('hub', true);
-    hasPlayedIntro = true;
-  };
-
-  // Attempt 1: Immediate on load
-  tryPlay();
-
-  // Attempt 2: First interaction anywhere on page (if browser blocked autoplay)
-  const onFirstTouch = () => {
-    tryPlay();
-    document.removeEventListener('click', onFirstTouch);
-    document.removeEventListener('touchstart', onFirstTouch);
-    document.removeEventListener('keydown', onFirstTouch);
-  };
-
-  document.addEventListener('click', onFirstTouch, { once: true });
-  document.addEventListener('touchstart', onFirstTouch, { once: true });
-  document.addEventListener('keydown', onFirstTouch, { once: true });
+// Play intro on the very first user interaction on the page
+let introPlayed = false;
+function onFirstInteraction() {
+  if (introPlayed) return;
+  introPlayed = true;
+  playSound('hub');
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -117,7 +90,9 @@ function initAutoplayIntro() {
 // ─────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   initParticles();
-  initAutoplayIntro();
+  // Intro sound on first click/touch anywhere on page
+  document.addEventListener('click', onFirstInteraction, { once: true });
+  document.addEventListener('touchstart', onFirstInteraction, { once: true });
   document.getElementById('begin-btn').addEventListener('click', startQuiz);
   document.addEventListener('keydown', handleKeydown);
 });
@@ -179,16 +154,12 @@ function showScreen(id) {
 //  START QUIZ
 // ─────────────────────────────────────────────────────────────
 function startQuiz() {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
-  }
-  playSound('rizz', true);
+  stopAudio();  // kill intro sound
   const landing = document.getElementById('landing');
   landing.style.animation = 'fadeOut 0.55s ease forwards';
   setTimeout(() => {
     showScreen('quiz-screen');
-    renderCurrent();
+    renderCurrent();  // will play the Round 1 intro sound
   }, 560);
 }
 
@@ -273,13 +244,12 @@ function renderCurrent(dir = 1) {
 
   // Trigger contextual sounds on screen enter
   if (item.type === 'round_intro') {
-    if (item.round === 1) playSound('rizz');
-    else if (item.round === 2) playSound('messi');
-    else if (item.round === 3) playSound('leteLete');
-    else if (item.round === 4) playSound('tuSamjha');
-  } else {
-    if (item.id === 'q8') playSound('gareeb');
-    else if (item.id === 'q11') playSound('takleef');
+    const roundSounds = { 1: 'rizz', 2: 'messi', 3: 'leteLete', 4: 'tuSamjha' };
+    if (roundSounds[item.round]) playSound(roundSounds[item.round]);
+  } else if (item.id === 'q8') {
+    playSound('gareeb');
+  } else if (item.id === 'q11') {
+    playSound('takleef');
   }
 }
 
@@ -412,17 +382,17 @@ function restoreAnswer(item) {
 function playOptionSound(val) {
   const str = String(val).toLowerCase();
   if (str.includes('messi') || str.includes('barcelona') || str.includes('yamal') || str.includes('argentina')) {
-    playSound('messi', true);
+    playSound('messi');
   } else if (str.includes('gawk') || str.includes('illegal')) {
-    playSound('jhaat', true);
+    playSound('jhaat');
   } else if (str.includes('hot wheels') || str.includes('jdm') || str.includes('supercars')) {
-    playSound('leteLete', true);
+    playSound('leteLete');
   } else if (str.includes('zoro') || str.includes('itachi') || str.includes('luffy') || str.includes('anime figure')) {
-    playSound('rizz', true);
+    playSound('rizz');
   } else if (str.includes('lawyer') || str.includes('trap') || str.includes('planning something')) {
-    playSound('tuSamjha', true);
+    playSound('tuSamjha');
   } else {
-    playSound('accha', true);
+    playSound('accha');
   }
 }
 
@@ -457,7 +427,7 @@ function attachOptionListeners(item) {
     const inp = document.getElementById(`input-${item.id}`);
     if (inp) {
       inp.addEventListener('focus', () => {
-        if (item.id === 'q8' || item.id === 'q9') playSound('sochna');
+        if (item.id === 'q8' || item.id === 'q9') playSound('sochna');  
       });
       inp.addEventListener('input', () => { answers[item.id] = inp.value; });
     }
@@ -568,7 +538,7 @@ function buildQuestion(item) {
 //  ANALYSIS SCREEN
 // ─────────────────────────────────────────────────────────────
 function goToAnalysis() {
-  playSound('phone', true);
+  playSound('phone');
   showScreen('analysis-screen');
 
   const phase1 = document.getElementById('analysis-phase1');
@@ -692,7 +662,7 @@ function buildPayload() {
 //  SUCCESS + CONFETTI
 // ─────────────────────────────────────────────────────────────
 function goToSuccess() {
-  playSound('hub', true);
+  playSound('hub');
   showScreen('success-screen');
   launchConfetti();
 }
