@@ -10,7 +10,9 @@ const QUIZ_DATA = [
     accent: '#a855f7', emoji: '⚔️',
     title: 'ROUND 1: ANIME',
     subtitle: "You've been dropped into the anime universe.",
-    text: 'Choose your weapon.'
+    text: 'Choose your weapon.',
+    meme: 'memes/meme_anime.png',
+    memeAlt: 'Me sending this link — Him realising it is about gifts'
   },
   {
     id: 'q1', type: 'choice', round: 1, required: true,
@@ -61,7 +63,9 @@ const QUIZ_DATA = [
     accent: '#3b82f6', emoji: '⚽',
     title: 'ROUND 2: FOOTBALL',
     subtitle: '90th minute. Final match.',
-    text: 'You get ONE gift.'
+    text: 'You get ONE gift.',
+    meme: 'memes/meme_football.png',
+    memeAlt: 'Me pretending this is normal while secretly planning the perfect gift'
   },
   {
     id: 'q5', type: 'multiselect', round: 2, required: true,
@@ -93,7 +97,9 @@ const QUIZ_DATA = [
     accent: '#f59e0b', emoji: '🚗',
     title: 'ROUND 3: THE GARAGE',
     subtitle: 'We need to investigate',
-    text: 'your automotive priorities.'
+    text: 'your automotive priorities.',
+    meme: 'memes/meme_hotwheels.png',
+    memeAlt: 'It is not just a toy car'
   },
   {
     id: 'q7', type: 'choice', round: 3, required: true,

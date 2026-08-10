@@ -31,6 +31,9 @@ const SHEET_NAME = 'Responses';   // tab name (created automatically)
 // 🔐 SECRET TOKEN — must match SUBMIT_SECRET in app.js
 const SECRET = 'gooner-vizag-2025';
 
+// 📧 EMAIL NOTIFICATION — put your Gmail address here
+const NOTIFY_EMAIL = 'YOUR_EMAIL@gmail.com';
+
 // ── COLUMN HEADERS ───────────────────────────────────────────
 const HEADERS = [
   'Timestamp',
@@ -98,6 +101,22 @@ function doPost(e) {
     // Auto-resize columns for readability
     sheet.autoResizeColumns(1, HEADERS.length);
 
+    // 📧 Send email notification
+    if (NOTIFY_EMAIL && NOTIFY_EMAIL !== 'YOUR_EMAIL@gmail.com') {
+      MailApp.sendEmail({
+        to     : NOTIFY_EMAIL,
+        subject: '🔍 He submitted the Investigation!',
+        body   :
+          'Your friend just completed the form.\n\n' +
+          'Q1 Gift Category : ' + (data.Q1_GiftCategory  || '-') + '\n' +
+          'Q2 Character     : ' + (data.Q2_Character     || '-') + '\n' +
+          'Q8 Money Question: ' + (data.Q8_MoneyQuestion || '-') + '\n' +
+          'Q9 Wishlist      : ' + (data.Q9_Wishlist      || '-') + '\n' +
+          'Q10 BROOOO pick  : ' + (data.Q10_BROOO        || '-') + '\n\n' +
+          'Open your Google Sheet for all answers.'
+      });
+    }
+
     return ContentService
       .createTextOutput(JSON.stringify({ status: 'ok' }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -118,6 +137,46 @@ function getOrCreateSheet() {
   let sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) sheet = ss.insertSheet(SHEET_NAME);
   return sheet;
+}
+
+// ── DEBUG: Simulate a real POST with the secret token ─────────
+// Run this in the Apps Script editor to test the FULL flow.
+// If this works but the website doesn't, the issue is the URL or secret mismatch.
+function debugPost() {
+  const fakeEvent = {
+    postData: {
+      contents: JSON.stringify({
+        secret          : SECRET,    // uses the same constant — will always match
+        Q1_GiftCategory : 'DEBUG — One Piece merch',
+        Q2_Character    : 'DEBUG — Luffy',
+        Q3_IllegalOther : '',
+        Q4_GiftType     : 'DEBUG — Something I can display',
+        Q5_FootballPrefs: 'DEBUG — Messi, Barcelona',
+        Q6_GiftStructure: 'DEBUG — One really cool gift',
+        Q7_HotWheels    : 'DEBUG — JDM',
+        Q8_MoneyQuestion: 'DEBUG — One Piece figure',
+        Q9_Wishlist     : 'DEBUG — Zoro figure',
+        Q10_BROOO       : 'DEBUG — Anime figure',
+        Q11_DontWant    : 'DEBUG — Socks',
+        Q12_TshirtSize  : 'L',
+        Q12_JerseySize  : 'L',
+        Q12_ShoeSize    : 'UK 9',
+        Q13_FinalAnswer : "DEBUG — You're buying me a GAWK GAWK"
+      })
+    }
+  };
+
+  const result = doPost(fakeEvent);
+  Logger.log('Result: ' + result.getContent());
+
+  if (result.getContent().includes('ok')) {
+    Logger.log('✅ SUCCESS — Row saved to sheet. Script is working correctly.');
+    Logger.log('→ If website still fails, the issue is a wrong URL or old deployment.');
+  } else if (result.getContent().includes('unauthorized')) {
+    Logger.log('❌ FAILED — Secret token mismatch.');
+  } else {
+    Logger.log('❌ FAILED — Check error above.');
+  }
 }
 
 // ── TEST FUNCTION ────────────────────────────────────────────

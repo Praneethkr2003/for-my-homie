@@ -348,6 +348,12 @@ function attachOptionListeners(item) {
 //  BUILD HTML — ROUND INTRO
 // ─────────────────────────────────────────────────────────────
 function buildRoundIntro(item) {
+  const memeHtml = item.meme
+    ? `<div class="meme-container" style="margin-top:20px">
+        <img src="${item.meme}" alt="${item.memeAlt || 'meme'}" class="meme-img meme-round" />
+       </div>`
+    : '';
+
   return `
     <div class="round-intro-card" style="--accent:${item.accent}">
       <style>
@@ -358,6 +364,7 @@ function buildRoundIntro(item) {
       <h2 class="round-intro-title">${item.title}</h2>
       <p class="round-intro-text">${item.subtitle}</p>
       <p class="round-intro-text"><strong>${item.text}</strong></p>
+      ${memeHtml}
     </div>`;
 }
 
