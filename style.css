@@ -689,6 +689,43 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; }
   opacity: 0.9;
 }
 
+/* ── SOUND TOGGLE BUTTON ───────────────────────────────────── */
+.sound-toggle-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f8fafc;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.sound-toggle-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(168, 85, 247, 0.5);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 24px rgba(168, 85, 247, 0.25);
+}
+
+.sound-toggle-btn.muted {
+  opacity: 0.65;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
 /* ── RESPONSIVE ─────────────────────────────────────────────── */
 
 @media (max-width: 600px) {

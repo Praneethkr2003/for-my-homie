@@ -27,6 +27,60 @@ function getQuestionNumber(item) {
 const ROUND_COLORS = { 1: '#a855f7', 2: '#3b82f6', 3: '#f59e0b', 4: '#ef4444' };
 
 // ─────────────────────────────────────────────────────────────
+//  SOUND ENGINE
+// ─────────────────────────────────────────────────────────────
+let soundEnabled = true;
+let currentAudio = null;
+
+const SOUND_FILES = {
+  accha:    'SOUNDS/accha-thik-hai-samjhgya-puneet-superstar.mp3',
+  messi:   'SOUNDS/camera-wowo-messi.mp3',
+  jhaat:   'SOUNDS/ek-jhaat-bhar-ka-aadmi.mp3',
+  hub:     'SOUNDS/hub-intro-sound.mp3',
+  takleef: 'SOUNDS/is-sajjan-ko-kya-takleef-hai-bhai.mp3',
+  gareeb:  'SOUNDS/jo-gareeb-hove-naa.mp3',
+  leteLete:'SOUNDS/kya-aap-lete-lete.mp3',
+  rizz:    'SOUNDS/rizz-sound-effect.mp3',
+  sochna:  'SOUNDS/sochna-pdta-hai-re-hindustani-bhau.mp3',
+  tuSamjha:'SOUNDS/tu-samjha.mp3',
+  phone:   'SOUNDS/yo-phone-is-ringing.mp3'
+};
+
+const SOUNDS = {};
+Object.keys(SOUND_FILES).forEach(key => {
+  SOUNDS[key] = new Audio(SOUND_FILES[key]);
+  SOUNDS[key].preload = 'auto';
+});
+
+function playSound(key) {
+  if (!soundEnabled || !SOUNDS[key]) return;
+  try {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
+    currentAudio = SOUNDS[key];
+    currentAudio.currentTime = 0;
+    currentAudio.play().catch(() => {});
+  } catch (e) {
+    console.log('Audio playback error:', e);
+  }
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const btn = document.getElementById('sound-toggle');
+  if (soundEnabled) {
+    btn.classList.remove('muted');
+    btn.innerHTML = '🔊 <span id="sound-toggle-text">SOUND ON</span>';
+  } else {
+    if (currentAudio) currentAudio.pause();
+    btn.classList.add('muted');
+    btn.innerHTML = '🔇 <span id="sound-toggle-text">MUTED</span>';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -92,6 +146,7 @@ function showScreen(id) {
 //  START QUIZ
 // ─────────────────────────────────────────────────────────────
 function startQuiz() {
+  playSound('hub');
   const landing = document.getElementById('landing');
   landing.style.animation = 'fadeOut 0.55s ease forwards';
   setTimeout(() => {
@@ -178,6 +233,17 @@ function renderCurrent(dir = 1) {
 
   updateProgress(item);
   updateNavButtons(item);
+
+  // Trigger contextual sounds on screen enter
+  if (item.type === 'round_intro') {
+    if (item.round === 1) playSound('rizz');
+    else if (item.round === 2) playSound('messi');
+    else if (item.round === 3) playSound('leteLete');
+    else if (item.round === 4) playSound('tuSamjha');
+  } else {
+    if (item.id === 'q8') playSound('gareeb');
+    else if (item.id === 'q11') playSound('takleef');
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -306,6 +372,23 @@ function restoreAnswer(item) {
 // ─────────────────────────────────────────────────────────────
 //  OPTION CLICK LISTENERS
 // ─────────────────────────────────────────────────────────────
+function playOptionSound(val) {
+  const str = String(val).toLowerCase();
+  if (str.includes('messi') || str.includes('barcelona') || str.includes('yamal') || str.includes('argentina')) {
+    playSound('messi');
+  } else if (str.includes('gawk') || str.includes('illegal')) {
+    playSound('jhaat');
+  } else if (str.includes('hot wheels') || str.includes('jdm') || str.includes('supercars')) {
+    playSound('leteLete');
+  } else if (str.includes('zoro') || str.includes('itachi') || str.includes('luffy') || str.includes('anime figure')) {
+    playSound('rizz');
+  } else if (str.includes('lawyer') || str.includes('trap') || str.includes('planning something')) {
+    playSound('tuSamjha');
+  } else {
+    playSound('accha');
+  }
+}
+
 function attachOptionListeners(item) {
   if (item.type === 'choice' || item.type === 'final_choice') {
     document.querySelectorAll('.option-card').forEach(c => {
@@ -314,6 +397,7 @@ function attachOptionListeners(item) {
         c.classList.add('selected');
         answers[item.id] = c.dataset.value;
         document.getElementById('q-err')?.classList.remove('visible');
+        playOptionSound(c.dataset.value);
       });
     });
   }
@@ -327,13 +411,19 @@ function attachOptionListeners(item) {
         if (idx === -1) { answers[item.id].push(val); c.classList.add('selected'); }
         else { answers[item.id].splice(idx, 1); c.classList.remove('selected'); }
         document.getElementById('q-err')?.classList.remove('visible');
+        playOptionSound(val);
       });
     });
   }
 
   if (item.type === 'text' || item.type === 'textarea') {
     const inp = document.getElementById(`input-${item.id}`);
-    if (inp) inp.addEventListener('input', () => { answers[item.id] = inp.value; });
+    if (inp) {
+      inp.addEventListener('focus', () => {
+        if (item.id === 'q8' || item.id === 'q9') playSound('sochna');
+      });
+      inp.addEventListener('input', () => { answers[item.id] = inp.value; });
+    }
   }
 
   if (item.type === 'sizes') {
@@ -441,6 +531,7 @@ function buildQuestion(item) {
 //  ANALYSIS SCREEN
 // ─────────────────────────────────────────────────────────────
 function goToAnalysis() {
+  playSound('phone');
   showScreen('analysis-screen');
 
   const phase1 = document.getElementById('analysis-phase1');
@@ -564,6 +655,7 @@ function buildPayload() {
 //  SUCCESS + CONFETTI
 // ─────────────────────────────────────────────────────────────
 function goToSuccess() {
+  playSound('hub');
   showScreen('success-screen');
   launchConfetti();
 }
