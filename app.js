@@ -84,11 +84,40 @@ function toggleSound() {
   }
 }
 
+// ── AUTOPLAY INTRO ON LOAD ────────────────────────────────────
+let hasPlayedIntro = false;
+
+function initAutoplayIntro() {
+  if (hasPlayedIntro) return;
+
+  const tryPlay = () => {
+    if (hasPlayedIntro) return;
+    playSound('hub', true);
+    hasPlayedIntro = true;
+  };
+
+  // Attempt 1: Immediate on load
+  tryPlay();
+
+  // Attempt 2: First interaction anywhere on page (if browser blocked autoplay)
+  const onFirstTouch = () => {
+    tryPlay();
+    document.removeEventListener('click', onFirstTouch);
+    document.removeEventListener('touchstart', onFirstTouch);
+    document.removeEventListener('keydown', onFirstTouch);
+  };
+
+  document.addEventListener('click', onFirstTouch, { once: true });
+  document.addEventListener('touchstart', onFirstTouch, { once: true });
+  document.addEventListener('keydown', onFirstTouch, { once: true });
+}
+
 // ─────────────────────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   initParticles();
+  initAutoplayIntro();
   document.getElementById('begin-btn').addEventListener('click', startQuiz);
   document.addEventListener('keydown', handleKeydown);
 });
