@@ -52,16 +52,20 @@ Object.keys(SOUND_FILES).forEach(key => {
   SOUNDS[key].preload = 'auto';
 });
 
-function playSound(key) {
-  if (!soundEnabled || !SOUNDS[key]) return;
+function playSound(key, force = false) {
+  if (!soundEnabled || !SOUND_FILES[key]) return;
   try {
+    // If a sound is currently playing and force is false, let it finish naturally
+    if (!force && currentAudio && !currentAudio.paused && !currentAudio.ended) {
+      return;
+    }
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
     }
-    currentAudio = SOUNDS[key];
-    currentAudio.currentTime = 0;
-    currentAudio.play().catch(() => {});
+    const audio = new Audio(SOUND_FILES[key]);
+    currentAudio = audio;
+    audio.play().catch(e => console.log('Audio playback info:', e));
   } catch (e) {
     console.log('Audio playback error:', e);
   }
@@ -146,7 +150,7 @@ function showScreen(id) {
 //  START QUIZ
 // ─────────────────────────────────────────────────────────────
 function startQuiz() {
-  playSound('hub');
+  playSound('hub', true);
   const landing = document.getElementById('landing');
   landing.style.animation = 'fadeOut 0.55s ease forwards';
   setTimeout(() => {
@@ -375,17 +379,17 @@ function restoreAnswer(item) {
 function playOptionSound(val) {
   const str = String(val).toLowerCase();
   if (str.includes('messi') || str.includes('barcelona') || str.includes('yamal') || str.includes('argentina')) {
-    playSound('messi');
+    playSound('messi', true);
   } else if (str.includes('gawk') || str.includes('illegal')) {
-    playSound('jhaat');
+    playSound('jhaat', true);
   } else if (str.includes('hot wheels') || str.includes('jdm') || str.includes('supercars')) {
-    playSound('leteLete');
+    playSound('leteLete', true);
   } else if (str.includes('zoro') || str.includes('itachi') || str.includes('luffy') || str.includes('anime figure')) {
-    playSound('rizz');
+    playSound('rizz', true);
   } else if (str.includes('lawyer') || str.includes('trap') || str.includes('planning something')) {
-    playSound('tuSamjha');
+    playSound('tuSamjha', true);
   } else {
-    playSound('accha');
+    playSound('accha', true);
   }
 }
 
@@ -531,7 +535,7 @@ function buildQuestion(item) {
 //  ANALYSIS SCREEN
 // ─────────────────────────────────────────────────────────────
 function goToAnalysis() {
-  playSound('phone');
+  playSound('phone', true);
   showScreen('analysis-screen');
 
   const phase1 = document.getElementById('analysis-phase1');
@@ -655,7 +659,7 @@ function buildPayload() {
 //  SUCCESS + CONFETTI
 // ─────────────────────────────────────────────────────────────
 function goToSuccess() {
-  playSound('hub');
+  playSound('hub', true);
   showScreen('success-screen');
   launchConfetti();
 }
