@@ -179,7 +179,11 @@ function showScreen(id) {
 //  START QUIZ
 // ─────────────────────────────────────────────────────────────
 function startQuiz() {
-  playSound('hub', true);
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+  playSound('rizz', true);
   const landing = document.getElementById('landing');
   landing.style.animation = 'fadeOut 0.55s ease forwards';
   setTimeout(() => {
