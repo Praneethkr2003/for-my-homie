@@ -61,7 +61,7 @@ const QUIZ_DATA = [
     accent: '#3b82f6', emoji: '⚽',
     title: 'ROUND 2: FOOTBALL',
     subtitle: '90th minute. Final match.',
-    text: 'You get ONE birthday gift.'
+    text: 'You get ONE gift.'
   },
   {
     id: 'q5', type: 'multiselect', round: 2, required: true,
