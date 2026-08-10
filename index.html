@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE OFFICIAL BIRTHDAY GIFT INVESTIGATION</title>
+  <meta name="description" content="You've been selected for a very important and definitely-not-suspicious survey. Your responses will be reviewed by the GOONER Committee Of Vizag™." />
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Particle background -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 1: LANDING
+  ════════════════════════════════════════════ -->
+  <div id="landing" class="screen active">
+    <div class="landing-content">
+      <div class="badge">🔍 CLASSIFIED OPERATION</div>
+
+      <h1 class="landing-title">
+        THE OFFICIAL<br>
+        <span class="gradient-text">BIRTHDAY GIFT</span><br>
+        INVESTIGATION
+      </h1>
+
+      <p class="landing-subtitle">ENDUKU RAA NEEKU!</p>
+
+      <p class="landing-desc">
+        You've been selected for a very important and definitely-not-suspicious survey.<br>
+        Your responses will be reviewed by the <strong>GOONER Committee Of Vizag™</strong>
+      </p>
+
+      <p class="landing-disclaimer">
+        ⚠️ Your answers will be analyzed by highly qualified birthday professionals.
+      </p>
+
+      <button id="begin-btn" class="btn-primary">
+        BEGIN THE INVESTIGATION →
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 2: QUIZ
+  ════════════════════════════════════════════ -->
+  <div id="quiz-screen" class="screen">
+
+    <!-- Fixed top progress bar -->
+    <div class="progress-header" id="progress-header">
+      <div class="progress-label">
+        <span id="progress-text">Question 1 / 13</span>
+        <span id="round-badge" class="round-badge">ROUND 1</span>
+      </div>
+      <div class="progress-bar-track">
+        <div id="progress-bar" class="progress-bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- Question area -->
+    <div class="question-container">
+      <div id="question-card" class="question-card">
+        <!-- Dynamically rendered by app.js -->
+      </div>
+    </div>
+
+    <!-- Fixed bottom nav -->
+    <div class="nav-buttons" id="nav-buttons">
+      <button id="prev-btn" class="btn-secondary" onclick="prevQuestion()">← PREVIOUS</button>
+      <button id="next-btn" class="btn-primary"   onclick="nextQuestion()">NEXT →</button>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 3: ANALYSIS
+  ════════════════════════════════════════════ -->
+  <div id="analysis-screen" class="screen">
+    <div class="analysis-content">
+
+      <!-- Phase 1: Scanning -->
+      <div id="analysis-phase1" class="analysis-header">
+        <div class="scan-animation">
+          <div class="scan-bar"></div>
+        </div>
+        <h2 class="analysis-title" id="analysis-title">ANALYZING SUBJECT…</h2>
+        <p class="analysis-sub">Please stand by while we process your suspicious answers.</p>
+      </div>
+
+      <!-- Phase 2: Stats bars -->
+      <div id="stats-container" class="stats-container" style="display:none">
+        <!-- Filled by app.js -->
+      </div>
+
+      <!-- Phase 3: Complete + submit -->
+      <div id="analysis-complete" style="display:none; text-align:center">
+        <div class="complete-text">
+          <h2 class="gradient-text">ANALYSIS COMPLETE.</h2>
+          <p>Your birthday preferences have been successfully recorded.</p>
+          <p class="complete-sub">
+            Your answers have been forwarded to the
+            <strong>Department of GOONER Committee of Vizag™</strong>
+          </p>
+        </div>
+        <button id="submit-btn" class="btn-primary btn-large" onclick="submitAnswers()">
+          SUBMIT MY ANSWERS 🎂
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 4: SUCCESS
+  ════════════════════════════════════════════ -->
+  <div id="success-screen" class="screen">
+    <canvas id="confetti-canvas"></canvas>
+    <div class="success-content">
+      <div class="success-icon">🎉</div>
+      <h2 class="gradient-text">SUBMITTED SUCCESSFULLY!</h2>
+      <p>Thank you for completing the ENDUKU RAA NEEKU Survey.</p>
+      <p class="success-sub">Your cooperation has been noted. Please do not ask questions.</p>
+      <p class="success-sub">The GOONER Committee Of Vizag™ will be in touch.</p>
+    </div>
+  </div>
+
+  <!-- Error toast (shared) -->
+  <div id="error-toast" class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
