@@ -3,7 +3,7 @@
    ============================================================ */
 
 // 🎂 PASTE YOUR GOOGLE APPS SCRIPT DEPLOYED URL HERE (line 6)
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzR1TNNzZ_TgLx7_pVeXzr4b5V-JU2K81jw1deLClEQHRbNUfKktnAeSdKBWJ6jFmJcmw/exec"
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOwWQMnZnilcA1eS1orCfqMW__ZhSob0asLo7cocUhmxJ53gyMGxTqX03-W33R60jgFA/exec"
 // 🔐 SECRET TOKEN — must match the one in apps-script.gs
 const SUBMIT_SECRET = "gooner-vizag-2025";
 
