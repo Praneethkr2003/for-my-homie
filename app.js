@@ -43,7 +43,8 @@ const SOUND_FILES = {
   rizz:     'SOUNDS/rizz-sound-effect.mp3',
   sochna:   'SOUNDS/sochna-pdta-hai-re-hindustani-bhau.mp3',
   tuSamjha: 'SOUNDS/tu-samjha.mp3',
-  phone:    'SOUNDS/yo-phone-is-ringing.mp3'
+  phone:    'SOUNDS/yo-phone-is-ringing.mp3',
+  yamal:    'SOUNDS/lamine-yamal.mp3'
 };
 
 function stopAudio() {
@@ -381,7 +382,9 @@ function restoreAnswer(item) {
 // ─────────────────────────────────────────────────────────────
 function playOptionSound(val) {
   const str = String(val).toLowerCase();
-  if (str.includes('messi') || str.includes('barcelona') || str.includes('yamal') || str.includes('argentina')) {
+  if (str.includes('yamal')) {
+    playSound('yamal');
+  } else if (str.includes('messi') || str.includes('barcelona') || str.includes('argentina')) {
     playSound('messi');
   } else if (str.includes('gawk') || str.includes('illegal')) {
     playSound('jhaat');
